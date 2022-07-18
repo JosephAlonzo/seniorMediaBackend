@@ -4,8 +4,7 @@ class UsersController < ApplicationController
 
   # GET /users
   def index
-    @users = User.all
-
+    @users = User.where.not(id: current_user)
     render json: @users
   end
 
@@ -27,10 +26,16 @@ class UsersController < ApplicationController
 
   # PATCH/PUT /users/1
   def update
-    if @user.update(user_params)
-      render json: @user
-    else
-      render json: @user.errors, status: :unprocessable_entity
+    tokens = @user.tokens.to_i + user_params["tokens"].to_i;
+    currentUserTokens = current_user.tokens.to_i - user_params["tokens"].to_i;
+    begin
+      if currentUserTokens >= 0 && current_user.update(tokens: currentUserTokens) && @user.update(tokens: tokens)
+        render json: @user
+      else
+        render json: "user doesn't have enough tokens", status: :unprocessable_entity
+      end
+    rescue
+      raise ActiveRecord::Rollback
     end
   end
 
