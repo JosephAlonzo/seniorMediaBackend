@@ -4,7 +4,7 @@ class UsersController < ApplicationController
 
   # GET /users
   def index
-    @users = User.where.not(id: current_user)
+    @users = User.where.not(id: current_user).order(created_at: :desc)
     render json: @users
   end
 
