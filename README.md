@@ -1,24 +1,34 @@
-# README
+# senior_media
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## Project setup
+```
+bundles install
+```
+### install DB
+```
+rails db:migrate
+```
 
-Things you may want to cover:
+## add config/master.key 
 
-* Ruby version
+```
+2bef56128c83c67bb0623d9cea97ede7
+```
 
-* System dependencies
+## is you want to modify JWT secret key
 
-* Configuration
+```
+// if you need to define your editor in windows
+// $env:EDITOR="code --wait"
 
-* Database creation
+rails credentials:edit
+```
 
-* Database initialization
 
-* How to run the test suite
 
-* Services (job queues, cache servers, search engines, etc.)
 
-* Deployment instructions
+### Compiles and hot-reloads for development
+```
+rails serve
+```
 
-* ...
