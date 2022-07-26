@@ -2,11 +2,11 @@
 
 ## Project setup
 ```
-bundles install
-```
-### install DB
-```
-rails db:migrate
+//Install Bundler gem
+gem install bundler
+
+//Run
+bundle install
 ```
 
 ## add config/master.key 
@@ -15,7 +15,12 @@ rails db:migrate
 2bef56128c83c67bb0623d9cea97ede7
 ```
 
-## is you want to modify JWT secret key
+### install DB
+```
+rails db:migrate
+```
+
+## if you need to modify JWT secret key
 
 ```
 // if you need to define your editor in windows
@@ -25,10 +30,8 @@ rails credentials:edit
 ```
 
 
-
-
 ### Compiles and hot-reloads for development
 ```
-rails serve
+rails server
 ```
 
