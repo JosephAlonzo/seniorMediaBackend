@@ -1,6 +1,7 @@
 class UsersController < ApplicationController
   before_action :authenticate_user!
   before_action :set_user, only: %i[ show update destroy ]
+  before_action :validate_params, only: %i[ update ]
 
   # GET /users
   def index
@@ -27,15 +28,18 @@ class UsersController < ApplicationController
   # PATCH/PUT /users/1
   def update
     tokens = @user.tokens.to_i + user_params["tokens"].to_i;
-    currentUserTokens = current_user.tokens.to_i - user_params["tokens"].to_i;
-    begin
-      if currentUserTokens >= 0 && current_user.update(tokens: currentUserTokens) && @user.update(tokens: tokens)
+    new_token_value_for_loggend_user = current_user.tokens.to_i - user_params["tokens"].to_i;
+    
+    User.transaction do 
+      logged_user_is_updated = current_user.update(tokens: new_token_value_for_loggend_user)
+      user_is_updated = @user.update(tokens: tokens)
+      
+      if logged_user_is_updated && user_is_updated
         render json: @user
       else
-        render json: "user doesn't have enough tokens", status: :unprocessable_entity
+        render json: "failed to update", status: :unprocessable_entity
       end
-    rescue
-      raise ActiveRecord::Rollback
+
     end
   end
 
@@ -54,4 +58,13 @@ class UsersController < ApplicationController
     def user_params
       params.fetch(:user, {})
     end
+
+    def validate_params
+      #verify value of tokens sents
+      new_token_value_for_loggend_user = current_user.tokens.to_i - user_params["tokens"].to_i;
+
+      if user_params["tokens"].to_i < 0 || new_token_value_for_loggend_user < 0
+        render json: "invalid token value", status: :unprocessable_entity
+      end
+    end 
 end
